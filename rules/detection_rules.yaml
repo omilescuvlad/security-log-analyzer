@@ -1,0 +1,52 @@
+regex_rules:
+  - id: SQLI_IN_URL
+    description: "Possible SQL injection keywords found in URL"
+    severity: "high"
+    target: "path"
+    pattern: '(?i)(?:\bUNION\b|\bSELECT\b|%27|''\s+OR\s+|--\s|/\*|\bsleep\s*\()'
+
+  - id: PATH_TRAVERSAL
+    description: "Path traversal sequence found in URL"
+    severity: "high"
+    target: "path"
+    pattern: '(?:\.\./|%2e%2e%2f)'
+
+  - id: SENSITIVE_PATH
+    description: "Access to sensitive/admin path"
+    severity: "medium"
+    target: "path"
+    any_of:
+      - "/phpmyadmin"
+      - "/wp-admin"
+      - "/wp-login.php"
+      - "/admin"
+      - "/.git"
+      - "/.env"
+
+  - id: SUSPICIOUS_UA
+    description: "Suspicious or tool-like User-Agent"
+    severity: "low"
+    target: "ua"
+    any_of_ci:
+      - "sqlmap"
+      - "nikto"
+      - "nmap"
+      - "curl"
+
+aggregation_rules:
+  - id: BRUTE_FORCE_LOGIN
+    description: "Repeated failed login attempts from same IP"
+    severity: "high"
+    window_minutes: 5
+    threshold: 5
+    filter:
+      status_in: [401, 403]
+      path_contains_any: ["/login", "/wp-login.php", "/signin"]
+
+  - id: SCANNER_404
+    description: "Burst of 404 Not Found responses from same IP"
+    severity: "medium"
+    window_minutes: 2
+    threshold: 10
+    filter:
+      status_in: [404]
