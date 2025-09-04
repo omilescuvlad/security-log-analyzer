@@ -116,7 +116,8 @@ Responder Notes:
 
 ## Architecture Diagram
 
-![Architecture](docs/architecture.png)
+![Architecture](docs/architecture.svg)
+
 
 
 
