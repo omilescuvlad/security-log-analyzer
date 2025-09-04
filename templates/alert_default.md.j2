@@ -1,0 +1,17 @@
+# Security Alert
+
+**Rule:** {{ det.rule_id }}
+**Severity:** {{ det.severity }}
+**Count:** {{ det.count }}
+**Window UTC:** {{ det.ts_first.isoformat() }} → {{ det.ts_last.isoformat() }}
+**Source IP:** {{ det.src_ip or "-" }}
+
+**Summary:**
+{{ det.summary }}
+
+{% if det.evidence %}
+**Evidence (first 5 lines):**
+{% for ev in det.evidence[:5] %}
+- {{ ev }}
+{% endfor %}
+{% endif %}

@@ -14,7 +14,7 @@ from detectors.engine import detect_from_jsonl
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help="Security Log Analyzer CLI")
 
-# ------- ZIUA 1 -------
+# .ingest
 ingest_app = typer.Typer(add_completion=False, no_args_is_help=True, help="Ingest & parse logs")
 
 @ingest_app.command("file", help="Reads an Apache log file (combined) and outputs normalized JSONL.")
@@ -41,7 +41,7 @@ def ingest_file(
 
 app.add_typer(ingest_app, name="ingest")
 
-# ------- ZIUA 2 -------
+# .detect
 detect_app = typer.Typer(add_completion=False, no_args_is_help=True, help="Detecting rules/anomalies on JSONL")
 
 @detect_app.command("run", help="Run detection on a normalized JSONL (from 'ingest').")
@@ -75,5 +75,33 @@ def detect_run(
 
 app.add_typer(detect_app, name="detect")
 
+# .alert
+alert_app = typer.Typer(
+    add_completion=False,
+    no_args_is_help=True,
+    help="Alert routing for detections"
+)
+
+@alert_app.command("run", help="Route alerts from a detections JSONL file using a YAML config.")
+def alert_run(
+    detections: Path = typer.Argument(..., exists=True, readable=True, help="JSONL file produced by 'detect run --out'"),
+    config: Path = typer.Option(Path("config/alerting.yaml"), "--config", help="Alerting YAML configuration"),
+    state: Path = typer.Option(Path(".state/alerts_state.json"), "--state", help="State file for dedup/rate-limiting"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Do not send to external routes; print to console"),
+):
+    try:
+        from alerts.engine import route_alerts
+        total, sent, suppressed = route_alerts(str(detections), str(config), str(state), dry_run=dry_run)
+        rprint(f"[green]Alerting complete[/green] total={total}, sent={sent}, suppressed={suppressed}")
+    except Exception as e:
+        rprint(f"[red]Alerting failed:[/red] {e}")
+        raise typer.Exit(code=1)
+
+app.add_typer(alert_app, name="alert")
+
 if __name__ == "__main__":
     app()
+    
+
+    
+    

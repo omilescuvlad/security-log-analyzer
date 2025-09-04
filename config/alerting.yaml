@@ -1,0 +1,43 @@
+min_severity: medium         
+dedup_minutes: 15            # identical alerts within 15 minutes are suppressed
+rate_limit_per_rule: 100     
+rate_limit_window_minutes: 60
+
+routes:
+  # Always keep a console route for local development and dry-run previews
+  - name: console-dev
+    type: console
+    filter:
+      min_severity: medium
+
+  # Slack incoming webhook example
+  - name: slack-high
+    type: slack_webhook
+    url: ${SLACK_WEBHOOK_URL}        # set as environment variable
+    filter:
+      min_severity: high
+      include_rules: ["*"]
+
+  # Email via SMTP example
+  - name: email-critical
+    type: email_smtp
+    smtp_host: smtp.office365.com
+    smtp_port: 587
+    use_tls: true
+    username: ${SMTP_USERNAME}       # env var
+    password: ${SMTP_PASSWORD}       # env var
+    mail_from: "security-logs@example.com"
+    mail_to: ["soc@example.com"]
+    subject_template: "[{severity}] {rule_id} ({count} hits)"
+    filter:
+      min_severity: critical
+
+  # Generic webhook for SIEM/ELK/anything else
+  - name: webhook-json
+    type: http_webhook
+    url: ${GENERIC_WEBHOOK_URL}
+    method: POST
+    headers:
+      X-API-Key: ${GENERIC_WEBHOOK_KEY}
+    filter:
+      min_severity: high

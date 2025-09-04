@@ -23,3 +23,12 @@ $detections = Join-Path $repoRoot "detections.jsonl"
 & $python "$repoRoot\cli.py" detect run $parsedJsonl --rules "$repoRoot\rules\detection_rules.yaml" --out $detections --pretty
 
 Write-Host "Wrote detections to $detections" -ForegroundColor Green
+
+# 1) Run detection and write to a file
+$detections = Join-Path $PSScriptRoot "..\sample_logs\detections.jsonl"
+python ..\cli.py detect run ..\sample_logs\apache_access.jsonl --output $detections
+
+# 2) Send alerts in dry-run mode (prints to console)
+python ..\cli.py alert run $detections --dry-run
+
+
