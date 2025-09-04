@@ -114,24 +114,9 @@ Responder Notes:
 - Actions taken: block_ip, slack_notify, ticket
 ```
 
-```markdown
-```mermaid
-flowchart LR
-    A[Raw Logs\napache_access.log] --> B[Parser (Day 1)\napache -> JSONL\nsample_logs/apache_access.jsonl]
-    B --> C[Detection (Day 2)\nrules/detection_rules.yaml -> detections\nsample_logs/detections.jsonl]
-    C --> D[Alerting (Day 3)\nmin_severity • dedup • rate_limit\nroutes: console/slack/email/webhook]
-    D --> E[Auto-Responder (Day 4)\nplaybooks: block_ip, slack/email/webhook, write_ticket]
+## Architecture Diagram
 
-    E --> F[System Containment\nWindows Firewall rule]
-    E --> G[Knowledge/Records\ntickets/*.md]
+![Architecture](docs/architecture.png)
 
-    subgraph State
-      S1[.state/alerts_state.json\n(dedup & rate limit)]
-      S2[.state/respond_state.json\n(cooldowns & TTL)]
-    end
-
-    D --- S1
-    E --- S2
-```
 
 
