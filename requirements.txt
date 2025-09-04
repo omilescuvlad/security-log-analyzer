@@ -1,0 +1,5 @@
+typer>=0.12
+pydantic>=2.7
+regex>=2024.4.16
+rich>=13.7
+pyyaml>=6.0.2

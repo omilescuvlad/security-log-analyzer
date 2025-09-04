@@ -1,0 +1,4 @@
+127.0.0.1 - - [10/Oct/2000:13:55:36 -0700] "GET /index.html HTTP/1.0" 200 2326 "http://example.com/start.html" "Mozilla/5.0"
+192.168.0.10 - alice [03/Sep/2025:10:20:15 +0300] "POST /login HTTP/1.1" 401 512 "-" "curl/8.0.1"
+203.0.113.45 - - [03/Sep/2025:10:21:00 +0300] "GET /phpmyadmin/ HTTP/1.1" 404 123 "-" "Mozilla/5.0"
+198.51.100.23 - - [03/Sep/2025:10:22:10 +0300] "GET /?q=1%27%20UNION%20SELECT%20password%20FROM%20users%20--%20 HTTP/1.1" 200 1042 "-" "Mozilla/5.0"
