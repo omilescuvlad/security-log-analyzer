@@ -99,6 +99,30 @@ def alert_run(
 
 app.add_typer(alert_app, name="alert")
 
+# .respond
+respond_app = typer.Typer(add_completion=False, no_args_is_help=True, help="Auto-responder playbooks")
+
+@respond_app.command("run", help="Run auto-responder playbooks against detections JSONL.")
+def respond_run(
+    detections: Path = typer.Argument(..., exists=True, readable=True, help="JSONL file produced by 'detect run'"),
+    config: Path = typer.Option(Path("config/responding.yaml"), "--config", help="Responder playbooks YAML"),
+    alert_config: Path = typer.Option(Path("config/alerting.yaml"), "--alert-config", help="Alerting YAML (for notify routes)"),
+    state: Path = typer.Option(Path(".state/respond_state.json"), "--state", help="Responder state file"),
+    dry_run: bool = typer.Option(False, "--dry-run", help="Print intended actions without executing them"),
+):
+    try:
+        from responders.engine import run_responder
+        total, executed, suppressed = run_responder(
+            str(detections), str(config), str(alert_config), str(state), dry_run=dry_run
+        )
+        rprint(f"[green]Responder complete[/green] detections={total}, actions_executed={executed}, actions_suppressed={suppressed}")
+    except Exception as e:
+        rprint(f"[red]Responder failed:[/red] {e}")
+        raise typer.Exit(code=1)
+
+app.add_typer(respond_app, name="respond")
+
+
 if __name__ == "__main__":
     app()
     

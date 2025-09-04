@@ -31,4 +31,20 @@ python ..\cli.py detect run ..\sample_logs\apache_access.jsonl --output $detecti
 # 2) Send alerts in dry-run mode (prints to console)
 python ..\cli.py alert run $detections --dry-run
 
+# -------- Day 4: Auto-Responder demo --------
+# 1) Generate detections (Day 2)
+$detections = Join-Path $PSScriptRoot "..\sample_logs\detections.jsonl"
+python ..\cli.py detect run ..\sample_logs\apache_access.jsonl --out $detections
+
+# 2) Dry-run responder (no real changes to system)
+python ..\cli.py respond run $detections --dry-run
+
+# 3) Real run (be sure you understand actions; block_ip will add a Windows FW rule)
+# (Optional) Set Slack/email env vars if you have notify actions referencing alert routes
+# $env:SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/..."
+# $env:SMTP_USERNAME = "user@example.com"
+# $env:SMTP_PASSWORD = "********"
+python ..\cli.py respond run $detections
+
+
 

@@ -1,0 +1,19 @@
+**When (UTC):** {{ det.ts_last.isoformat() }}
+**Rule:** {{ det.rule_id }}
+**Severity:** {{ det.severity|upper }}
+**Source IP:** {{ det.src_ip or "-" }}
+**Count:** {{ det.count }}
+
+**Summary:**
+{{ det.summary }}
+
+{% if det.evidence %}
+**Evidence (first 5 lines):**
+{% for ev in det.evidence[:5] %}
+- {{ ev }}
+{% endfor %}
+{% endif %}
+
+**Responder Notes:**
+- Action(s) taken: {{ actions_taken|join(", ") }}
+- Next steps: Review logs around the time window. Validate false positive vs real attack.
